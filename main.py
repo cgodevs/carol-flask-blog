@@ -15,7 +15,7 @@ from flask_gravatar import Gravatar
 from forms import *
 import os
 from dotenv import load_dotenv
-
+# gunicorn version 20.1.0
 load_dotenv('.env')
 
 app = Flask(__name__)
@@ -277,4 +277,4 @@ def delete_post(post_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)  # host='0.0.0.0', port=5000)
+    app.run()  # host='0.0.0.0', port=5000
