@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sqlite:///blog.db')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 Base = declarative_base()
@@ -33,7 +33,7 @@ gravatar = Gravatar(app,
                     base_url=None)
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -209,10 +209,10 @@ def contact():
 
         with smtplib.SMTP("smtp.gmail.com", 587) as connection:
             connection.starttls()
-            connection.login(user=os.getenv('EMAIL'), password=os.getenv('PASSWORD'))
+            connection.login(user=os.environ.get('EMAIL'), password=os.environ.get('PASSWORD'))
             connection.sendmail(
-                from_addr=os.getenv('EMAIL'),
-                to_addrs=os.getenv('EMAIL_TO'),
+                from_addr=os.environ.get('EMAIL'),
+                to_addrs=os.environ.get('EMAIL_TO'),
                 msg=unidecode(message))
 
         flash("Successfully sent your message", "success")
