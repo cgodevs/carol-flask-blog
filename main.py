@@ -158,7 +158,6 @@ def logout():
 
 
 @app.route("/post/<int:post_id>", methods=['GET', 'POST'])
-@login_required
 def show_post(post_id):
     requested_post = BlogPost.query.get(post_id)
     comment_form = CommentForm()
@@ -178,7 +177,10 @@ def show_post(post_id):
         db.session.add(new_comment)
         db.session.commit()
 
-    is_admin = True if current_user.id == 1 else False
+    try:
+        is_admin = True if current_user.id == 1 else False
+    except AttributeError:  # when current_user doesn't exist
+        is_admin = False
     return render_template("post.html", post=requested_post, is_admin=is_admin, comment_form=comment_form)
 
 
@@ -199,7 +201,7 @@ def about():
 
 @app.route("/contact", methods=['GET','POST'])
 def contact():
-    #doesn't work! :(
+
     if request.method == "POST":
         message = f"""Subject:Someone sent you a message via personal webpage\n\n
                 Name: {request.form["person_name"]}\n
@@ -215,7 +217,7 @@ def contact():
                 to_addrs=os.environ.get('EMAIL_TO'),
                 msg=unidecode(message))
 
-        flash("Successfully sent your message", "success")
+        flash("****Successfully sent your message****", "success")
         return redirect(url_for("contact"))
 
     return render_template("contact.html")
